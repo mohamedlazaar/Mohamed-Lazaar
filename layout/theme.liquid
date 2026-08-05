@@ -139,7 +139,7 @@
       >
         {{ content_for_layout }}
       </main>
-     {%- if template.suffix == 'gift-guide'  -%}
+     {%- if template.suffix != 'gift-guide'  -%}
       <footer>
         {% sections 'footer-group' %}
       </footer>
