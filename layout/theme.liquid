@@ -55,7 +55,7 @@
     {% render 'chat-drawer' %}
 
     <div class="page-wrapper">
-       {%- if template.suffix == 'gift-guide'  -%}
+       {%- if template.suffix != 'gift-guide'  -%}
       <div id="header-group">
         {% sections 'header-group' %}
       </div>
