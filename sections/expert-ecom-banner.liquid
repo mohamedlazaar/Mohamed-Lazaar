@@ -1,0 +1,361 @@
+
+
+<section class="gg-banner" aria-label="{{ section.settings.heading | escape }}">
+    {%- comment -%} ---------- Top bar ---------- {%- endcomment -%}
+    <div class="gg-banner__topbar">
+      {%- if section.settings.brand_logo != blank -%}
+        <img
+          class="gg-banner__brand-logo"
+          src="{{ section.settings.brand_logo | image_url: width: 900 }}"
+          alt="{{ section.settings.brand_name | escape }}"
+          width="{{ section.settings.brand_logo.width }}"
+          height="{{ section.settings.brand_logo.height }}"
+          loading="eager"
+        >
+      {%- else -%}
+        <span class="gg-banner__brand">{{ section.settings.brand_name | escape }}</span>
+      {%- endif -%}
+  
+      <span class="gg-banner__promo">{{ section.settings.promo_text | escape }}</span>
+  
+      <a
+        class="gg-banner__gift-btn gg-btn"
+        href="{{ section.settings.choose_gift_link | default: '#' }}"
+      >
+        {{ section.settings.choose_gift_label | escape }}
+      </a>
+    </div>
+  
+    {%- comment -%} ---------- Hero ---------- {%- endcomment -%}
+    <div class="gg-banner__hero">
+      {%- if section.settings.background_image != blank -%}
+        <img
+          class="gg-banner__bg"
+          src="{{ section.settings.background_image | image_url: width: 3840 }}"
+          alt=""
+          loading="eager"
+          width="{{ section.settings.background_image.width }}"
+          height="{{ section.settings.background_image.height }}"
+        >
+      {%- endif -%}
+  
+      <div class="gg-banner__content">
+        <h1 class="gg-banner__heading">{{ section.settings.heading | escape }}</h1>
+  
+        <div class="gg-banner__text">{{ section.settings.body_text }}</div>
+  
+        <a
+          class="gg-banner__shop-btn gg-btn gg-btn--dark"
+          href="{{ section.settings.shop_now_link | default: '#' }}"
+        >
+          {{ section.settings.shop_now_label | escape }}
+        </a>
+      </div>
+    </div>
+  
+    {%- comment -%} ---------- Bottom strip ---------- {%- endcomment -%}
+    <div class="gg-banner__strip">
+      {{ section.settings.strip_text | escape }}
+    </div>
+  </section>
+  
+  {% stylesheet %}
+    /* =========================================================================
+       BANNER STYLES  (scoped under .gg-banner so nothing leaks into the theme)
+       Simple PX mode:
+         • base rules              = mobile   (375 Figma frame)
+         • @media (min-width:750px) = desktop (1440 Figma frame)
+       ========================================================================= */
+  
+    .gg-banner {
+      /* ---- Tunable font sizes — MOBILE (375 frame) ---- */
+      --gg-fs-brand: 16px;
+      --gg-fs-promo: 12px;
+      --gg-fs-btn:   12px;
+      --gg-fs-h1:    36px;
+      --gg-fs-body:  14px;
+      --gg-fs-strip: 10px;
+  
+      /* ---- Palette (from the reference) ---- */
+      --gg-yellow: #f5e003;
+      --gg-black:  #111111;
+      --gg-white:  #ffffff;
+  
+      font-family: 'Jost', sans-serif;
+      color: var(--gg-black);
+      background: var(--gg-white);
+      display: block;
+    }
+  
+    /* ---------- Top bar ---------- */
+    .gg-banner__topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 20px;
+    }
+  
+    .gg-banner__brand {
+      font-size: var(--gg-fs-brand);
+      font-weight: 600;
+      letter-spacing: 0.15em;
+    }
+  
+    /* Brand logo (image). Sizes come straight from Figma.
+       375 and 1440 frames are identical (151.44 x 19), so the base rule covers
+       both; only 4K (3840) is larger — see the override at the bottom. */
+    .gg-banner__brand-logo {
+      display: block;
+      width: 151.44px;
+      height: 19px;
+      object-fit: contain;
+    }
+  
+    .gg-banner__promo {
+      font-size: var(--gg-fs-promo);
+      font-weight: 400;
+      /* hidden on the smallest screens; shown on desktop */
+      display: none;
+    }
+  
+    /* ---------- Hero ---------- */
+    .gg-banner__hero {
+      position: relative;
+      overflow: hidden;
+      padding: 30px 20px 40px;
+      min-height: 280px;
+    }
+  
+    .gg-banner__bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      z-index: 0;
+      pointer-events: none;
+    }
+  
+    .gg-banner__content {
+      position: relative;
+      z-index: 1;
+      max-width: 240px;
+    }
+  
+    .gg-banner__heading {
+      font-size: var(--gg-fs-h1);
+      font-weight: 700;
+      line-height: 1.05;
+      margin: 0 0 12px;
+    }
+  
+    .gg-banner__text {
+      font-size: var(--gg-fs-body);
+      line-height: 1.5;
+      margin: 0 0 20px;
+    }
+    .gg-banner__text p { margin: 0 0 1em; }
+  
+    /* ---------- Bottom strip ---------- */
+    .gg-banner__strip {
+      text-align: center;
+      font-size: var(--gg-fs-strip);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 12px 20px;
+      border-top: 1px solid rgba(0,0,0,0.08);
+    }
+  
+    /* =========================================================================
+       BUTTONS + ANIMATION  (pure CSS, no jQuery)
+       A fill slides up from the bottom on hover/focus. The transform is
+       GPU-friendly and animates smoothly.
+       ========================================================================= */
+    .gg-btn {
+      position: relative;
+      display: inline-block;
+      overflow: hidden;
+      isolation: isolate;            /* keep the ::before behind the label */
+      font-size: var(--gg-fs-btn);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      line-height: 1;
+      padding: 12px 20px;
+      border: 1px solid var(--gg-black);
+      color: var(--gg-black);
+      background: var(--gg-yellow);
+      cursor: pointer;
+    }
+  
+    .gg-btn::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: var(--gg-black);
+      transform: translateY(100%);   /* parked below the button */
+      transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+  
+    .gg-btn:hover,
+    .gg-btn:focus-visible {
+      color: var(--gg-white);
+    }
+    .gg-btn:hover::before,
+    .gg-btn:focus-visible::before {
+      transform: translateY(0);      /* slides up to fill */
+    }
+  
+    /* Dark variant (SHOP NOW): starts black, fills yellow on hover */
+    .gg-btn--dark {
+      background: var(--gg-black);
+      color: var(--gg-white);
+    }
+    .gg-btn--dark::before { background: var(--gg-yellow); }
+    .gg-btn--dark:hover,
+    .gg-btn--dark:focus-visible { color: var(--gg-black); }
+  
+    /* Accessibility: keyboard focus ring + respect reduced motion */
+    .gg-btn:focus-visible { outline: 2px solid var(--gg-black); outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) {
+      .gg-btn::before { transition: none; }
+    }
+  
+    /* =========================================================================
+       DESKTOP  ( >= 750px )  — fixed px from the 1440 Figma frame
+       ========================================================================= */
+    @media (min-width: 750px) {
+      .gg-banner {
+        /* ---- Font sizes — DESKTOP (1440 frame) ---- */
+        --gg-fs-brand: 20px;
+        --gg-fs-promo: 15px;
+        --gg-fs-btn:   15px;
+        --gg-fs-h1:    60px;
+        --gg-fs-body:  18px;
+        --gg-fs-strip: 13px;
+      }
+  
+      .gg-banner__topbar {
+        gap: 40px;
+        padding: 24px 60px;
+      }
+  
+      .gg-banner__promo { display: inline; }  /* room to show it on desktop */
+  
+      .gg-banner__hero {
+        padding: 120px 60px 160px;
+        min-height: 640px;
+      }
+  
+      .gg-banner__content { max-width: 520px; }
+  
+      .gg-banner__heading { margin: 0 0 24px; }
+      .gg-banner__text    { margin: 0 0 36px; }
+  
+      .gg-btn { padding: 18px 40px; }
+  
+      .gg-banner__strip { padding: 18px 60px; }
+    }
+  
+    @media (min-width: 1920px) {
+      .gg-banner__brand-logo {
+        width: 403.85px;
+        height: 50.67px;
+      }
+    }
+  
+  {% endstylesheet %}
+  
+  {% schema %}
+  {
+    "name": "GG Banner",
+    "tag": "section",
+    "class": "gg-banner-section",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Top bar"
+      },
+      {
+        "type": "image_picker",
+        "id": "brand_logo",
+        "label": "Brand logo"
+      },
+      {
+        "type": "text",
+        "id": "brand_name",
+        "label": "Brand name (logo alt text / fallback)",
+        "default": "TISSO VISON"
+      },
+      {
+        "type": "text",
+        "id": "promo_text",
+        "label": "Promo text (center)",
+        "default": "Find the ideal gift for your loved ones."
+      },
+      {
+        "type": "text",
+        "id": "choose_gift_label",
+        "label": "Gift button label",
+        "default": "CHOOSE GIFT"
+      },
+      {
+        "type": "url",
+        "id": "choose_gift_link",
+        "label": "Gift button link"
+      },
+      {
+        "type": "header",
+        "content": "Hero"
+      },
+      {
+        "type": "image_picker",
+        "id": "background_image",
+        "label": "Background illustration"
+      },
+      {
+        "type": "text",
+        "id": "heading",
+        "label": "Heading",
+        "default": "The Gift Guide"
+      },
+      {
+        "type": "richtext",
+        "id": "body_text",
+        "label": "Body text",
+        "default": "<p>Discover Joy. Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season.</p>"
+      },
+      {
+        "type": "text",
+        "id": "shop_now_label",
+        "label": "Shop button label",
+        "default": "SHOP NOW"
+      },
+      {
+        "type": "url",
+        "id": "shop_now_link",
+        "label": "Shop button link"
+      },
+      {
+        "type": "header",
+        "content": "Bottom strip"
+      },
+      {
+        "type": "text",
+        "id": "strip_text",
+        "label": "Strip text",
+        "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
+      }
+    ],
+    "presets": [
+      {
+        "name": "GG Banner"
+      }
+    ]
+  }
+  {% endschema %}
+  
