@@ -1,6 +1,59 @@
+{%- comment -%}
+  ============================================================================
+  SECTION: Banner  (Gift Guide hero)
+  ----------------------------------------------------------------------------
+  Built FROM SCRATCH for the Ecomexperts hiring test.
+    - No Dawn sections/snippets are used.
+    - No jQuery. The button animation is pure CSS (no JS needed here).
+    - Every "red rectangle" text is editable from the Theme Customizer
+      (see the {% schema %} block at the bottom of this file).
 
+  RESPONSIVE MODE: SIMPLE PX  (two Figma frames used here: 375 / 1440)
+  ----------------------------------------------------------------------------
+  Fixed pixel values per breakpoint — no vw scaling. Pixel-perfect AT each
+  design width, static in between (the standard, easy-to-edit approach).
 
-<section class="gg-banner" aria-label="{{ section.settings.heading | escape }}">
+  Breakpoints (mobile-first):
+      • base rules                = mobile   (375 frame)
+      • @media (min-width: 750px) = desktop  (1440 frame)
+
+  Font-sizes live in CSS variables at the top of each breakpoint so you can
+  tune them in one place. Swap the px values for your exact Figma numbers.
+  (Note: with px mode the layout does NOT grow on very large/4K screens; if you
+  want it centered there, wrap content in a max-width container — see the note
+  at the end of the stylesheet.)
+
+  FONT
+  ----------------------------------------------------------------------------
+  Uses "Jost". Make sure Jost is loaded once in the theme, e.g. add this to
+  layout/theme.liquid <head>:
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  Font-SIZES are exposed as CSS variables at the top of the stylesheet so you
+  can tune them without hunting through the file.
+  ============================================================================
+{%- endcomment -%}
+
+{%- comment -%}
+  Hide the theme header/announcement bar on THIS page only.
+  Uses the {% style %} tag (not {% stylesheet %}) so it renders inline and only
+  loads where this section appears — it will NOT affect the rest of the store.
+  Dawn wraps every header-group section in `.shopify-section-group-header-group`,
+  so hiding that hides the whole header group. Fallback selectors included.
+{%- endcomment -%}
+{%- if section.settings.hide_theme_header -%}
+    {%- style -%}
+      .shopify-section-group-header-group,
+      .header-wrapper,
+      #shopify-section-header {
+        display: none !important;
+      }
+    {%- endstyle -%}
+  {%- endif -%}
+  
+  <section
+    class="gg-banner"
+    aria-label="{{ section.settings.heading | escape }}"
+  >
     {%- comment -%} ---------- Top bar ---------- {%- endcomment -%}
     <div class="gg-banner__topbar">
       {%- if section.settings.brand_logo != blank -%}
@@ -28,21 +81,36 @@
   
     {%- comment -%} ---------- Hero ---------- {%- endcomment -%}
     <div class="gg-banner__hero">
-      {%- if section.settings.background_image != blank -%}
-        <img
-          class="gg-banner__bg"
-          src="{{ section.settings.background_image | image_url: width: 3840 }}"
-          alt=""
-          loading="eager"
-          width="{{ section.settings.background_image.width }}"
-          height="{{ section.settings.background_image.height }}"
-        >
+  
+      {%- liquid
+        assign bg_desktop = section.settings.background_image
+        assign bg_mobile = section.settings.background_image_mobile | default: section.settings.background_image
+      -%}
+      {%- if bg_desktop != blank or bg_mobile != blank -%}
+        <picture class="gg-banner__bg">
+          {%- if bg_desktop != blank -%}
+            <source
+              media="(min-width: 750px)"
+              srcset="{{ bg_desktop | image_url: width: 3840 }}"
+            >
+          {%- endif -%}
+          <img
+            class="gg-banner__bg-img"
+            src="{{ bg_mobile | image_url: width: 900 }}"
+            alt=""
+            loading="eager"
+            width="{{ bg_mobile.width }}"
+            height="{{ bg_mobile.height }}"
+          >
+        </picture>
       {%- endif -%}
   
-      <div class="gg-banner__content">
-        <h1 class="gg-banner__heading">{{ section.settings.heading | escape }}</h1>
+      <div class="gg-banner__inner">
+        <div class="gg-banner__content">
+          <h1 class="gg-banner__heading">{{ section.settings.heading | escape }}</h1>
   
-        <div class="gg-banner__text">{{ section.settings.body_text }}</div>
+          <div class="gg-banner__text">{{ section.settings.body_text }}</div>
+        </div>
   
         <a
           class="gg-banner__shop-btn gg-btn gg-btn--dark"
@@ -60,12 +128,6 @@
   </section>
   
   {% stylesheet %}
-    /* =========================================================================
-       BANNER STYLES  (scoped under .gg-banner so nothing leaks into the theme)
-       Simple PX mode:
-         • base rules              = mobile   (375 Figma frame)
-         • @media (min-width:750px) = desktop (1440 Figma frame)
-       ========================================================================= */
   
     .gg-banner {
       /* ---- Tunable font sizes — MOBILE (375 frame) ---- */
@@ -91,10 +153,13 @@
     .gg-banner__topbar {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;   /* mobile: only the logo shows, centered */
       gap: 12px;
       padding: 16px 20px;
     }
+  
+    /* Gift button is not shown on mobile (matches the mobile design) */
+    .gg-banner__gift-btn { display: none; }
   
     .gg-banner__brand {
       font-size: var(--gg-fs-brand);
@@ -119,31 +184,50 @@
       display: none;
     }
   
-    /* ---------- Hero ---------- */
+    /* ---------- Hero ----------
+       Mobile: a tall column. The copy (heading + text) sits at the top and the
+       SHOP NOW button is pushed to the bottom via space-between, all centered
+       over the illustration. Desktop overrides this to a bottom-left block. */
     .gg-banner__hero {
       position: relative;
       overflow: hidden;
-      padding: 30px 20px 40px;
-      min-height: 280px;
       display: flex;
-      align-items: flex-end;
+      padding: 24px 20px 32px;
+      min-height: 520px;
+    }
+  
+    .gg-banner__inner {
+      position: relative;
+      z-index: 1;
+      flex: 1;                        /* fill the hero height */
+      display: flex;
+      flex-direction: column;
+      align-items: center;           /* mobile: center everything */
+      justify-content: space-between; /* copy top, button bottom */
+      text-align: center;
+      width: 100%;
     }
   
     .gg-banner__bg {
       position: absolute;
       inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      display: block;
+    }
+  
+    .gg-banner__bg-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: center;
-      z-index: 0;
-      pointer-events: none;
+      display: block;
     }
   
     .gg-banner__content {
       position: relative;
       z-index: 1;
-      max-width: 240px;
+      max-width: 100%;   /* mobile: full width, centered by .gg-banner__inner */
     }
   
     .gg-banner__heading {
@@ -242,15 +326,28 @@
       }
   
       .gg-banner__topbar {
+        justify-content: space-between;  /* logo left, promo center, button right */
         gap: 40px;
         padding: 24px 60px;
       }
   
-      .gg-banner__promo { display: inline; }  /* room to show it on desktop */
+      .gg-banner__gift-btn { display: inline-block; } /* shown on desktop */
+      .gg-banner__promo { display: inline; }          /* shown on desktop */
   
       .gg-banner__hero {
-        padding:  30px 40px;
+        align-items: flex-end;          /* content block sits toward the bottom */
+        padding: 60px;
         min-height: 640px;
+      }
+  
+      /* Desktop: stop stretching; group copy + button as a left-aligned block */
+      .gg-banner__inner {
+        flex: none;
+        align-items: flex-start;
+        justify-content: flex-start;
+        text-align: left;
+        width: auto;
+        max-width: 520px;
       }
   
       .gg-banner__content { max-width: 520px; }
@@ -263,6 +360,10 @@
       .gg-banner__strip { padding: 18px 60px; }
     }
   
+    /* =========================================================================
+       LARGE / 4K  ( >= 1920px )  — brand logo grows to its 3840 Figma size.
+       (Only the logo differs between the 1440 and 3840 frames.)
+       ========================================================================= */
     @media (min-width: 1920px) {
       .gg-banner__brand-logo {
         width: 403.85px;
@@ -270,6 +371,20 @@
       }
     }
   
+    /* =========================================================================
+       OPTIONAL — cap the layout on very large / 4K screens so it stays centered
+       instead of hugging the left. Uncomment to use.
+       ========================================================================= */
+    /*
+    @media (min-width: 1600px) {
+      .gg-banner__topbar,
+      .gg-banner__hero,
+      .gg-banner__strip {
+        max-width: 1440px;
+        margin-inline: auto;
+      }
+    }
+    */
   {% endstylesheet %}
   
   {% schema %}
@@ -278,6 +393,16 @@
     "tag": "section",
     "class": "gg-banner-section",
     "settings": [
+      {
+        "type": "header",
+        "content": "Page"
+      },
+      {
+        "type": "checkbox",
+        "id": "hide_theme_header",
+        "label": "Hide theme header on this page",
+        "default": true
+      },
       {
         "type": "header",
         "content": "Top bar"
@@ -317,7 +442,12 @@
       {
         "type": "image_picker",
         "id": "background_image",
-        "label": "Background illustration"
+        "label": "Background illustration (desktop)"
+      },
+      {
+        "type": "image_picker",
+        "id": "background_image_mobile",
+        "label": "Background illustration (mobile)"
       },
       {
         "type": "text",
