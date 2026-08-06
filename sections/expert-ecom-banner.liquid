@@ -388,13 +388,13 @@
   
     /* =========================================================================
        BUTTONS + ANIMATION  (pure CSS, no jQuery)
-       
+
        A fill slides up from the bottom on hover/focus. The transform is
        GPU-friendly and animates smoothly.
        ========================================================================= */
     .gg-btn {
       position: relative;
-      display: none;
+      display: inline-block;
       overflow: hidden;
       isolation: isolate;            /* keep the ::before behind the label */
       font-size: var(--gg-fs-btn);
@@ -526,6 +526,9 @@
       }
     }
     */
+    @media (max-width: 750px) {
+        .gg-banner__gift-btn.gg-btn { display: none; }
+    }
   {% endstylesheet %}
   
   {% javascript %}
