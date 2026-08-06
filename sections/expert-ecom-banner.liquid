@@ -400,22 +400,22 @@
     }
   
     .gg-btn::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-      background: var(--gg-black);
-      transform: translateX(100%);   /* parked below the button */
-      transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--gg-black);
+    transform: translateX(-100%);   /* parked to the LEFT of the button */
+    transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
-  
+
     .gg-btn:hover,
     .gg-btn:focus-visible {
-      color: var(--gg-white);
+    color: var(--gg-white);
     }
     .gg-btn:hover::before,
     .gg-btn:focus-visible::before {
-      transform: translateX(100%);      /* slides up to fill */
+    transform: translateX(0);       /* fill sweeps left → right */
     }
   
     /* Dark variant (SHOP NOW): starts black, fills yellow on hover */
@@ -495,7 +495,7 @@
        LARGE / 4K  ( >= 1920px )  — brand logo grows to its 3840 Figma size.
        (Only the logo differs between the 1440 and 3840 frames.)
        ========================================================================= */
-    @media (min-width: 1920px) {
+    @media (min-width: 3840px) {
       .gg-banner__brand-logo {
         width: 403.85px;
         height: 50.67px;
@@ -522,11 +522,7 @@
   {% endstylesheet %}
   
   {% javascript %}
-    /* =========================================================================
-       MOBILE MENU DRAWER  (vanilla JS, no jQuery)
-       Opens/closes the .gg-nav drawer. Guarded so it's a no-op on pages without
-       the banner. Closes on the X, the backdrop, or the Escape key.
-       ========================================================================= */
+
     (function () {
       'use strict';
   
