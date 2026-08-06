@@ -144,7 +144,8 @@
   
     {%- comment -%} ---------- Bottom strip ---------- {%- endcomment -%}
     <div class="gg-banner__strip">
-      {{ section.settings.strip_text | escape }}
+      <span class="gg-banner__strip-desktop">{{ section.settings.strip_text | escape }}</span>
+      <span class="gg-banner__strip-mobile">{{ section.settings.strip_text_mobile | escape }}</span>
     </div>
   </section>
   
@@ -375,7 +376,8 @@
        query below swaps to the desktop copy. Only one is ever visible. */
     .gg-banner__show-mobile  { display: block; }
     .gg-banner__show-desktop { display: none; }
-  
+    .gg-banner__strip-mobile { display: block; }
+    .gg-banner__strip-desktop { display: none; }
     /* ---------- Bottom strip ---------- */
     .gg-banner__strip {
       text-align: center;
@@ -457,7 +459,8 @@
         --gg-fs-body:  18px;
         --gg-fs-strip: 13px;
       }
-  
+      .gg-banner__strip-mobile { display: none; }
+      .gg-banner__strip-desktop { display: block; }
       .gg-banner__topbar {
         justify-content: space-between;  /* logo left, promo center, button right */
         gap: 40px;
@@ -673,6 +676,12 @@
         "type": "text",
         "id": "strip_text",
         "label": "Strip text",
+        "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
+      },
+      {
+        "type": "text",
+        "id": "strip_text_mobile",
+        "label": "Strip text (mobile)",
         "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
       }
     ],
