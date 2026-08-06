@@ -218,9 +218,9 @@
     background: #f2f2f2;
   }
   .gg-popup__meta { flex: 1; min-width: 0; }
-  .gg-popup__title { font-size: 16px; font-weight: 500; margin: 0 0 6px; }
-  .gg-popup__price { font-size: 18px; font-weight: 500; margin: 0 0 10px; }
-  .gg-popup__desc  { font-size: 13px; line-height: 1.5; color: #555; margin: 0; }
+  .gg-popup__title { font-size: 16px; font-weight: 300; margin: 0 0 6px; }
+  .gg-popup__price { font-size: 18px; font-weight: 400; margin: 0 0 10px; }
+  .gg-popup__desc  { font-size: 13px; line-height: 1.5; color: #555; margin: 0; font-weight: 300; }
 
   /* Option groups (injected by JS) */
   .gg-opt { margin: 0 0 20px; }
@@ -235,25 +235,41 @@
   /* Colour = segmented buttons; selected = solid black fill */
   .gg-opt__values { display: flex; border: 1px solid var(--gg-black); }
   .gg-opt__btn {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
     flex: 1 1 0;
     font-family: inherit;
     font-size: 15px;
     padding: 14px;
     border: none;
-    border-left: 1px solid var(--gg-black);
+    border-left: 2px solid var(--gg-black);
     background: var(--gg-white);
     color: var(--gg-black);
     cursor: pointer;
     text-align: center;
-    transition: background 0.15s ease, color 0.15s ease;
+    transition: color 0.15s ease;
+  }
+  .gg-opt__btn::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;                     /* thin bar like the design */
+    background: var(--swatch, transparent);
+    opacity: 0;                     /* hidden until selected */
+    transition: opacity 0.15s ease;
   }
   .gg-opt__btn:first-child { border-left: none; }
-  .gg-opt__btn[aria-pressed="true"] {
-    background: var(--gg-black);
+  /* .gg-opt__btn[aria-pressed="true"] {
     color: var(--gg-white);
-  }
+  } */
+   
+  .gg-opt__btn[aria-pressed="true"]::before { opacity: 1; }
+  .gg-opt__btn:not([aria-pressed="true"])::before { transition: none; }
   .gg-opt__btn:focus-visible { outline: 2px solid var(--gg-black); outline-offset: -3px; }
-
+  @media (prefers-reduced-motion: reduce) { .gg-opt__btn::before { transition: none; } }
   /* Other options (Size, etc.) = custom dropdown */
   .gg-select { position: relative; }
   .gg-select__toggle {
@@ -363,7 +379,12 @@
     }
 
     function isColourOption(name) { return /colou?r/i.test(name); }
-
+    // Map an option value to a CSS colour for the left swatch bar.
+    function cssColorFor(val) {
+    var v = String(val).trim().toLowerCase();
+    var map = { red: '#8b1a2b', grey: '#a9a9a9', gray: '#a9a9a9', white: '#ffffff', black: '#111111', blue: '#2f4b8b', green: '#2e5d3b' };
+    return map[v] || v;   // falls back to letting the browser parse the name (e.g. "teal")
+    }
     function hasOptions(variant, targets) {
       if (!variant || !variant.options) return false;
       var opts = variant.options.map(function (o) { return String(o).toLowerCase(); });
@@ -442,6 +463,7 @@
               btn.type = 'button';
               btn.className = 'gg-opt__btn';
               btn.textContent = val;
+              btn.style.setProperty('--swatch', cssColorFor(val));
               btn.setAttribute('aria-pressed', String(current.selected[optIndex] === val));
               btn.addEventListener('click', function () {
                 current.selected[optIndex] = val;
