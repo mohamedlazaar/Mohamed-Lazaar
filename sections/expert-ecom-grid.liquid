@@ -1,6 +1,5 @@
 
 
-{%- comment -%} Auto-add product's variant id for the Black+Medium rule. {%- endcomment -%}
 {%- assign auto_add = section.settings.auto_add_product -%}
 {%- assign auto_add_variant_id = '' -%}
 {%- if auto_add != blank -%}
@@ -39,7 +38,6 @@
               >
             {%- endif -%}
 
-            {%- comment -%} "+" trigger that opens the popup {%- endcomment -%}
             <button
               type="button"
               class="gg-grid__dot"
@@ -50,7 +48,6 @@
             </button>
           </div>
 
-          {%- comment -%} Product data for the popup (variants incl. options). {%- endcomment -%}
           <script type="application/json" data-gg-product>
             {{ product | json }}
           </script>
@@ -89,18 +86,13 @@
 </section>
 
 {% stylesheet %}
-
   .gg-grid {
     --gg-fs-title: 24px;
-    --gg-fs-ptitle: 16px;
-    --gg-fs-price: 16px;
-    --gg-fs-body: 12px;
-    --gg-fs-opt: 13px;
 
     --gg-yellow: #f5e003;
     --gg-black: #111111;
     --gg-white: #ffffff;
-    --gg-accent: #2f6bff; /* selected-colour highlight (from the design) */
+    --gg-border: #cfcfcf;
 
     font-family: 'Jost', sans-serif;
     color: var(--gg-black);
@@ -145,7 +137,7 @@
     display: block;
   }
 
-  /* The circular "+" quick-view trigger (white, like the design) */
+  /* The circular "+" quick-view trigger */
   .gg-grid__dot {
     position: absolute;
     left: 50%;
@@ -191,21 +183,21 @@
     z-index: 1;
     background: var(--gg-white);
     width: 100%;
-    max-width: 460px;
+    max-width: 360px;
     max-height: 90vh;
     overflow-y: auto;
-    padding: 28px;
+    padding: 32px 20px 28px;
   }
 
   .gg-popup__x {
     position: absolute;
-    top: 14px;
-    right: 14px;
-    width: 32px;
-    height: 32px;
+    top: 12px;
+    right: 12px;
+    width: 30px;
+    height: 30px;
     border: none;
     background: transparent;
-    font-size: 26px;
+    font-size: 24px;
     line-height: 1;
     cursor: pointer;
   }
@@ -215,69 +207,100 @@
   .gg-popup__head {
     display: flex;
     gap: 16px;
-    margin: 0 0 24px;
+    margin: 0 0 22px;
   }
   .gg-popup__thumb {
-    width: 110px;
-    height: 120px;
+    width: 120px;
+    height: 140px;
     object-fit: cover;
     flex: none;
     display: block;
     background: #f2f2f2;
   }
   .gg-popup__meta { flex: 1; min-width: 0; }
-  .gg-popup__title { font-size: var(--gg-fs-ptitle); font-weight: 700; margin: 0 0 8px; }
-  .gg-popup__price { font-size: var(--gg-fs-price); font-weight: 600; margin: 0 0 8px; }
-  .gg-popup__desc  { font-size: var(--gg-fs-body); line-height: 1.5; color: #444; margin: 0; }
+  .gg-popup__title { font-size: 16px; font-weight: 400; margin: 0 0 6px; }
+  .gg-popup__price { font-size: 18px; font-weight: 500; margin: 0 0 10px; }
+  .gg-popup__desc  { font-size: 13px; line-height: 1.5; color: #555; margin: 0; }
 
   /* Option groups (injected by JS) */
-  .gg-opt { margin: 0 0 16px; }
+  .gg-opt { margin: 0 0 20px; }
   .gg-opt__name {
     display: block;
-    font-size: var(--gg-fs-opt);
+    font-size: 15px;
     font-weight: 400;
-    color: #333;
+    color: var(--gg-black);
     margin: 0 0 8px;
   }
 
-  /* Colour = segmented buttons */
-  .gg-opt__values { display: flex; }
+  /* Colour = segmented buttons; selected = solid black fill */
+  .gg-opt__values { display: flex; border: 1px solid var(--gg-black); }
   .gg-opt__btn {
     flex: 1 1 0;
     font-family: inherit;
-    font-size: 14px;
-    padding: 12px 14px;
-    border: 1px solid #d9d9d9;
-    border-left: none;
+    font-size: 15px;
+    padding: 14px;
+    border: none;
+    border-left: 1px solid var(--gg-black);
     background: var(--gg-white);
+    color: var(--gg-black);
     cursor: pointer;
     text-align: center;
-    transition: background 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease;
   }
-  .gg-opt__btn:first-child { border-left: 1px solid #d9d9d9; }
+  .gg-opt__btn:first-child { border-left: none; }
   .gg-opt__btn[aria-pressed="true"] {
-    outline: 2px solid var(--gg-accent);
-    outline-offset: -2px;
-    font-weight: 600;
+    background: var(--gg-black);
+    color: var(--gg-white);
   }
-  .gg-opt__btn:focus-visible { outline: 2px solid var(--gg-black); outline-offset: -2px; }
+  .gg-opt__btn:focus-visible { outline: 2px solid var(--gg-black); outline-offset: -3px; }
 
-  /* Other options (Size, etc.) = dropdown */
-  .gg-opt__select {
+  /* Other options (Size, etc.) = custom dropdown */
+  .gg-select { position: relative; }
+  .gg-select__toggle {
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid var(--gg-border);
+    background: var(--gg-white);
     font-family: inherit;
-    font-size: 14px;
-    padding: 12px 40px 12px 14px;
-    border: 1px solid #d9d9d9;
-    background-color: var(--gg-white);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23111' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    -webkit-appearance: none;
-    appearance: none;
+    font-size: 15px;
+    color: var(--gg-black);
+    text-align: left;
     cursor: pointer;
   }
-  .gg-opt__select:focus-visible { outline: 2px solid var(--gg-black); outline-offset: -2px; }
+  .gg-select__toggle:focus-visible { outline: 2px solid var(--gg-black); outline-offset: -2px; }
+  .gg-select__label { color: #333; }
+  .gg-select__chevron {
+    flex: none;
+    font-size: 12px;
+    transition: transform 0.2s ease;
+  }
+  .gg-select.is-open .gg-select__chevron { transform: rotate(180deg); }
+
+  /* Options list expands below the toggle (in flow), like the design */
+  .gg-select__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--gg-border);
+    border-top: none;
+    background: var(--gg-white);
+  }
+  .gg-select__list[hidden] { display: none; }
+  .gg-select__option {
+    padding: 13px 14px;
+    text-align: center;
+    font-size: 15px;
+    color: var(--gg-black);
+    cursor: pointer;
+    border-top: 1px solid #ececec;
+  }
+  .gg-select__option:first-child { border-top: none; }
+  .gg-select__option:hover,
+  .gg-select__option[aria-selected="true"] { background: #f4f4f4; }
 
   /* ADD TO CART — dark full-width bar with an arrow */
   .gg-popup__atc {
@@ -315,7 +338,6 @@
 
     .gg-grid__title { margin: 0 0 32px; }
 
-    /* 3 columns */
     .gg-grid__wrap {
       grid-template-columns: repeat(3, 1fr);
       gap: 8px;
@@ -327,10 +349,6 @@
 {% endstylesheet %}
 
 {% javascript %}
-  /* =========================================================================
-     GRID + POPUP BEHAVIOUR  (vanilla JS, no jQuery)
-     One IIFE, initialised once. Handles every .gg-grid section on the page.
-     ========================================================================= */
   (function () {
     'use strict';
 
@@ -344,25 +362,22 @@
       }
     }
 
-    // Colour-type option? (rendered as buttons; others become a dropdown)
-    function isColourOption(name) {
-      return /colou?r/i.test(name);
-    }
+    function isColourOption(name) { return /colou?r/i.test(name); }
 
-    // Variant options include BOTH targets? (case-insensitive)
     function hasOptions(variant, targets) {
       if (!variant || !variant.options) return false;
       var opts = variant.options.map(function (o) { return String(o).toLowerCase(); });
       return targets.every(function (t) { return opts.indexOf(t.toLowerCase()) !== -1; });
     }
 
-    // Find the variant matching the current selection (needs every option set).
     function findVariant(product, selected) {
       if (selected.some(function (v) { return v === '' || v == null; })) return null;
       return product.variants.find(function (v) {
         return v.options.every(function (opt, i) { return opt === selected[i]; });
       });
     }
+
+    function placeholderFor(name) { return 'Choose your ' + String(name).toLowerCase(); }
 
     function initSection(section) {
       var popup = section.querySelector('[data-gg-popup]');
@@ -380,12 +395,22 @@
       var autoAddVariantId = section.getAttribute('data-auto-add-variant') || '';
       var current = { product: null, selected: [], variant: null };
 
+      function closeSelect(sel) {
+        sel.classList.remove('is-open');
+        var list = sel.querySelector('.gg-select__list');
+        var tgl = sel.querySelector('.gg-select__toggle');
+        if (list) list.hidden = true;
+        if (tgl) tgl.setAttribute('aria-expanded', 'false');
+      }
+      function closeAllSelects() {
+        elOpts.querySelectorAll('.gg-select.is-open').forEach(closeSelect);
+      }
+
       // ---- Build the option controls -------------------------------------
       function renderOptions(product) {
         elOpts.innerHTML = '';
 
         product.options.forEach(function (optName, optIndex) {
-          // distinct values for this option, in order
           var values = [];
           product.variants.forEach(function (v) {
             var val = v.options[optIndex];
@@ -418,25 +443,61 @@
             });
             group.appendChild(wrap);
           } else {
-            // Dropdown with a "Choose your ..." placeholder
-            var select = document.createElement('select');
-            select.className = 'gg-opt__select';
-            var placeholder = document.createElement('option');
-            placeholder.value = '';
-            placeholder.textContent = 'Choose your ' + optName.toLowerCase();
-            select.appendChild(placeholder);
+            // Custom dropdown
+            var sel = document.createElement('div');
+            sel.className = 'gg-select';
+
+            var toggle = document.createElement('button');
+            toggle.type = 'button';
+            toggle.className = 'gg-select__toggle';
+            toggle.setAttribute('aria-haspopup', 'listbox');
+            toggle.setAttribute('aria-expanded', 'false');
+
+            var lab = document.createElement('span');
+            lab.className = 'gg-select__label';
+            lab.textContent = current.selected[optIndex] || placeholderFor(optName);
+
+            var chev = document.createElement('span');
+            chev.className = 'gg-select__chevron';
+            chev.setAttribute('aria-hidden', 'true');
+            chev.textContent = '\u25BE';
+
+            toggle.appendChild(lab);
+            toggle.appendChild(chev);
+
+            var list = document.createElement('ul');
+            list.className = 'gg-select__list';
+            list.setAttribute('role', 'listbox');
+            list.hidden = true;
+
             values.forEach(function (val) {
-              var opt = document.createElement('option');
-              opt.value = val;
-              opt.textContent = val;
-              select.appendChild(opt);
+              var li = document.createElement('li');
+              li.className = 'gg-select__option';
+              li.setAttribute('role', 'option');
+              li.textContent = val;
+              li.setAttribute('aria-selected', String(current.selected[optIndex] === val));
+              li.addEventListener('click', function () {
+                current.selected[optIndex] = val;
+                closeSelect(sel);
+                syncSelection();
+              });
+              list.appendChild(li);
             });
-            select.value = current.selected[optIndex] || '';
-            select.addEventListener('change', function () {
-              current.selected[optIndex] = select.value;
-              syncSelection();
+
+            toggle.addEventListener('click', function (e) {
+              e.stopPropagation();
+              var willOpen = !sel.classList.contains('is-open');
+              closeAllSelects();
+              if (willOpen) {
+                sel.classList.add('is-open');
+                list.hidden = false;
+                toggle.setAttribute('aria-expanded', 'true');
+              }
             });
-            group.appendChild(select);
+
+            sel.appendChild(toggle);
+            sel.appendChild(list);
+            group.appendChild(sel);
           }
 
           elOpts.appendChild(group);
@@ -450,14 +511,20 @@
           group.querySelectorAll('.gg-opt__btn').forEach(function (btn) {
             btn.setAttribute('aria-pressed', String(btn.textContent === current.selected[optIndex]));
           });
-          var select = group.querySelector('.gg-opt__select');
-          if (select) select.value = current.selected[optIndex] || '';
+          var sel = group.querySelector('.gg-select');
+          if (sel) {
+            var v = current.selected[optIndex];
+            var lab = sel.querySelector('.gg-select__label');
+            if (lab) lab.textContent = v || placeholderFor(current.product.options[optIndex]);
+            sel.querySelectorAll('.gg-select__option').forEach(function (li) {
+              li.setAttribute('aria-selected', String(li.textContent === v));
+            });
+          }
         });
 
         current.variant = findVariant(current.product, current.selected);
         var allChosen = current.selected.every(function (v) { return v !== '' && v != null; });
 
-        // Price: chosen variant, else the product's base price
         elPrice.textContent = formatMoney(current.variant ? current.variant.price : current.product.price);
 
         if (!allChosen) {
@@ -480,8 +547,6 @@
       function open(product) {
         current.product = product;
 
-        // Preselect colour from the first available variant; leave other
-        // options empty so their dropdowns show the placeholder (like the design).
         var def = product.variants.find(function (v) { return v.available; }) || product.variants[0];
         current.selected = product.options.map(function (name, i) {
           return (isColourOption(name) && def) ? def.options[i] : '';
@@ -506,6 +571,7 @@
       }
 
       function close() {
+        closeAllSelects();
         popup.hidden = true;
         document.documentElement.style.overflow = '';
       }
@@ -564,8 +630,15 @@
         el.addEventListener('click', close);
       });
       elAtc.addEventListener('click', addToCart);
+
+      // Click anywhere else closes any open dropdown
+      popup.addEventListener('click', function () { closeAllSelects(); });
+
       document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && !popup.hidden) close();
+        if (e.key !== 'Escape') return;
+        var openSel = elOpts.querySelector('.gg-select.is-open');
+        if (openSel) { closeSelect(openSel); return; }
+        if (!popup.hidden) close();
       });
     }
 
