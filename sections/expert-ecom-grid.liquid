@@ -251,22 +251,18 @@
     transition: color 0.15s ease;
   }
   .gg-opt__btn::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 6px;                     /* thin bar like the design */
-    background: var(--swatch, transparent);
-    opacity: 0;                     /* hidden until selected */
-    transition: opacity 0.15s ease;
-  }
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 6px;
+  background: var(--swatch, transparent);
+  z-index: 1;            /* keep the colour bar visible over the black fill */
+}
   .gg-opt__btn:first-child { border-left: none; }
-  /* .gg-opt__btn[aria-pressed="true"] {
+  .gg-opt__btn[aria-pressed="true"] {
+    background: var(--gg-black);
     color: var(--gg-white);
-  } */
-   
-  .gg-opt__btn[aria-pressed="true"]::before { opacity: 1; }
+    }
   .gg-opt__btn:not([aria-pressed="true"])::before { transition: none; }
   .gg-opt__btn:focus-visible { outline: 2px solid var(--gg-black); outline-offset: -3px; }
   @media (prefers-reduced-motion: reduce) { .gg-opt__btn::before { transition: none; } }
