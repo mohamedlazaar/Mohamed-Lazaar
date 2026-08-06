@@ -1,4 +1,5 @@
 
+
 {%- assign auto_add = section.settings.auto_add_product -%}
 {%- assign auto_add_variant_id = '' -%}
 {%- if auto_add != blank -%}
@@ -86,13 +87,7 @@
 </section>
 
 {% stylesheet %}
-  /* =========================================================================
-     GRID + POPUP STYLES  (scoped under .gg-grid / .gg-popup)
-     Simple PX mode:
-       • base rules              = mobile   (375 Figma frame)
-       • @media (min-width:750px) = desktop (1440 Figma frame)
-     Modal width/height use vw/vh on purpose (screen-relative sizing).
-     ========================================================================= */
+
   .gg-grid {
     /* ---- Tunable font sizes — MOBILE (375 frame) ---- */
     --gg-fs-title: 24px;
@@ -567,7 +562,7 @@
       "type": "text",
       "id": "heading",
       "label": "Section heading",
-      "default": ""
+      "default": "Heading"
     },
     {
       "type": "header",
