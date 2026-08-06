@@ -405,7 +405,7 @@
       inset: 0;
       z-index: -1;
       background: var(--gg-black);
-      transform: translateX(0);   /* parked below the button */
+      transform: translateX(100%);   /* parked below the button */
       transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
   
@@ -415,7 +415,7 @@
     }
     .gg-btn:hover::before,
     .gg-btn:focus-visible::before {
-      transform: translateX(100%);      /* slides up to fill */
+      transform: translateX(0);      /* slides up to fill */
     }
   
     /* Dark variant (SHOP NOW): starts black, fills yellow on hover */
