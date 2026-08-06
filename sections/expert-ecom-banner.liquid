@@ -13,10 +13,7 @@
   {%- endif -%}
 
   
-  <section
-    class="gg-banner"
-    aria-label="{{ section.settings.heading | escape }}"
-  >
+  <section class="gg-banner" aria-label="{{ section.settings.heading | escape }}" >
     {%- comment -%} Brand mark, reused in the top bar and the mobile menu. {%- endcomment -%}
     {%- capture brand_markup -%}
       {%- if section.settings.brand_logo != blank -%}
@@ -89,11 +86,6 @@
   
     {%- comment -%} ---------- Hero ---------- {%- endcomment -%}
     <div class="gg-banner__hero">
-      {%- comment -%}
-        Responsive background: <picture> serves the mobile image below 750px and
-        the desktop image at 750px+. Either can be left empty — if only one is
-        set, it's used everywhere. Only the needed image is downloaded.
-      {%- endcomment -%}
       {%- liquid
         assign bg_desktop = section.settings.background_image
         assign bg_mobile = section.settings.background_image_mobile | default: section.settings.background_image
@@ -150,13 +142,6 @@
   </section>
   
   {% stylesheet %}
-    /* =========================================================================
-       BANNER STYLES  (scoped under .gg-banner so nothing leaks into the theme)
-       Simple PX mode:
-         • base rules              = mobile   (375 Figma frame)
-         • @media (min-width:750px) = desktop (1440 Figma frame)
-       ========================================================================= */
-  
     .gg-banner {
       /* ---- Tunable font sizes — MOBILE (375 frame) ---- */
       --gg-fs-brand: 16px;
@@ -420,7 +405,7 @@
       inset: 0;
       z-index: -1;
       background: var(--gg-black);
-      transform: translateY(100%);   /* parked below the button */
+      transform: translateX(0);   /* parked below the button */
       transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
   
@@ -430,7 +415,7 @@
     }
     .gg-btn:hover::before,
     .gg-btn:focus-visible::before {
-      transform: translateY(0);      /* slides up to fill */
+      transform: translateX(100%);      /* slides up to fill */
     }
   
     /* Dark variant (SHOP NOW): starts black, fills yellow on hover */
