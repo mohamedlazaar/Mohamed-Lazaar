@@ -1,50 +1,12 @@
-{%- comment -%}
-  ============================================================================
-  SECTION: Banner  (Gift Guide hero)
-  ----------------------------------------------------------------------------
-  Built FROM SCRATCH for the Ecomexperts hiring test.
-    - No Dawn sections/snippets are used.
-    - No jQuery. The button animation is pure CSS (no JS needed here).
-    - Every "red rectangle" text is editable from the Theme Customizer
-      (see the {% schema %} block at the bottom of this file).
 
-  RESPONSIVE MODE: SIMPLE PX  (two Figma frames used here: 375 / 1440)
-  ----------------------------------------------------------------------------
-  Fixed pixel values per breakpoint — no vw scaling. Pixel-perfect AT each
-  design width, static in between (the standard, easy-to-edit approach).
-
-  Breakpoints (mobile-first):
-      • base rules                = mobile   (375 frame)
-      • @media (min-width: 750px) = desktop  (1440 frame)
-
-  Font-sizes live in CSS variables at the top of each breakpoint so you can
-  tune them in one place. Swap the px values for your exact Figma numbers.
-  (Note: with px mode the layout does NOT grow on very large/4K screens; if you
-  want it centered there, wrap content in a max-width container — see the note
-  at the end of the stylesheet.)
-
-  FONT
-  ----------------------------------------------------------------------------
-  Uses "Jost". Make sure Jost is loaded once in the theme, e.g. add this to
-  layout/theme.liquid <head>:
-    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  Font-SIZES are exposed as CSS variables at the top of the stylesheet so you
-  can tune them without hunting through the file.
-  ============================================================================
-{%- endcomment -%}
-
-{%- comment -%}
-  Hide the theme header/announcement bar on THIS page only.
-  Uses the {% style %} tag (not {% stylesheet %}) so it renders inline and only
-  loads where this section appears — it will NOT affect the rest of the store.
-  Dawn wraps every header-group section in `.shopify-section-group-header-group`,
-  so hiding that hides the whole header group. Fallback selectors included.
-{%- endcomment -%}
 {%- if section.settings.hide_theme_header -%}
     {%- style -%}
       .shopify-section-group-header-group,
+      #shopify-section-header,
       .header-wrapper,
-      #shopify-section-header {
+      .announcement-bar-section,
+      .utility-bar,
+      sticky-header {
         display: none !important;
       }
     {%- endstyle -%}
@@ -54,8 +16,8 @@
     class="gg-banner"
     aria-label="{{ section.settings.heading | escape }}"
   >
-    {%- comment -%} ---------- Top bar ---------- {%- endcomment -%}
-    <div class="gg-banner__topbar">
+    {%- comment -%} Brand mark, reused in the top bar and the mobile menu. {%- endcomment -%}
+    {%- capture brand_markup -%}
       {%- if section.settings.brand_logo != blank -%}
         <img
           class="gg-banner__brand-logo"
@@ -68,6 +30,22 @@
       {%- else -%}
         <span class="gg-banner__brand">{{ section.settings.brand_name | escape }}</span>
       {%- endif -%}
+    {%- endcapture -%}
+  
+    {%- comment -%} ---------- Top bar ---------- {%- endcomment -%}
+    <div class="gg-banner__topbar">
+      {%- comment -%} Hamburger — mobile only. Opens the menu drawer. {%- endcomment -%}
+      <button
+        type="button"
+        class="gg-banner__menu-toggle"
+        data-gg-nav-open
+        aria-label="Open menu"
+        aria-expanded="false"
+      >
+        <span></span><span></span><span></span>
+      </button>
+  
+      {{ brand_markup }}
   
       <span class="gg-banner__promo">{{ section.settings.promo_text | escape }}</span>
   
@@ -79,9 +57,42 @@
       </a>
     </div>
   
+    {%- comment -%}
+      Mobile menu drawer — matches the mobile design: close (X), centered logo,
+      promo text and the CHOOSE GIFT button. Hidden on desktop via CSS.
+    {%- endcomment -%}
+    <div class="gg-nav" data-gg-nav>
+      <div class="gg-nav__backdrop" data-gg-nav-close></div>
+      <div class="gg-nav__panel" role="dialog" aria-modal="true" aria-label="Menu">
+        <div class="gg-nav__bar">
+          <button
+            type="button"
+            class="gg-nav__close"
+            data-gg-nav-close
+            aria-label="Close menu"
+          >&times;</button>
+          {{ brand_markup }}
+        </div>
+        <div class="gg-nav__body">
+          <p class="gg-nav__promo">{{ section.settings.promo_text | escape }}</p>
+          <a
+            class="gg-nav__cta gg-btn"
+            href="{{ section.settings.choose_gift_link | default: '#' }}"
+          >
+            <span>{{ section.settings.choose_gift_label | escape }}</span>
+            <span class="gg-nav__arrow" aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  
     {%- comment -%} ---------- Hero ---------- {%- endcomment -%}
     <div class="gg-banner__hero">
-  
+      {%- comment -%}
+        Responsive background: <picture> serves the mobile image below 750px and
+        the desktop image at 750px+. Either can be left empty — if only one is
+        set, it's used everywhere. Only the needed image is downloaded.
+      {%- endcomment -%}
       {%- liquid
         assign bg_desktop = section.settings.background_image
         assign bg_mobile = section.settings.background_image_mobile | default: section.settings.background_image
@@ -107,9 +118,18 @@
   
       <div class="gg-banner__inner">
         <div class="gg-banner__content">
-          <h1 class="gg-banner__heading">{{ section.settings.heading | escape }}</h1>
+          {%- assign heading_mobile = section.settings.heading_mobile | default: section.settings.heading -%}
+          {%- assign body_mobile = section.settings.body_text_mobile | default: section.settings.body_text -%}
   
-          <div class="gg-banner__text">{{ section.settings.body_text }}</div>
+          <h1 class="gg-banner__heading">
+            <span class="gg-banner__show-desktop">{{ section.settings.heading | escape }}</span>
+            <span class="gg-banner__show-mobile">{{ heading_mobile | escape }}</span>
+          </h1>
+  
+          <div class="gg-banner__text">
+            <div class="gg-banner__show-desktop">{{ section.settings.body_text }}</div>
+            <div class="gg-banner__show-mobile">{{ body_mobile }}</div>
+          </div>
         </div>
   
         <a
@@ -128,6 +148,12 @@
   </section>
   
   {% stylesheet %}
+    /* =========================================================================
+       BANNER STYLES  (scoped under .gg-banner so nothing leaks into the theme)
+       Simple PX mode:
+         • base rules              = mobile   (375 Figma frame)
+         • @media (min-width:750px) = desktop (1440 Figma frame)
+       ========================================================================= */
   
     .gg-banner {
       /* ---- Tunable font sizes — MOBILE (375 frame) ---- */
@@ -151,15 +177,115 @@
   
     /* ---------- Top bar ---------- */
     .gg-banner__topbar {
+      position: relative;         /* anchor for the absolute hamburger */
       display: flex;
       align-items: center;
-      justify-content: center;   /* mobile: only the logo shows, centered */
+      justify-content: center;   /* mobile: logo centered; hamburger is absolute */
       gap: 12px;
       padding: 16px 20px;
     }
   
-    /* Gift button is not shown on mobile (matches the mobile design) */
+    /* Promo + gift button live in the mobile menu on small screens */
     .gg-banner__gift-btn { display: none; }
+    .gg-banner__promo { display: none; }
+  
+    /* Hamburger (mobile only) */
+    .gg-banner__menu-toggle {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 4px;
+      width: 26px;
+      height: 18px;
+      padding: 0;
+      border: none;
+      background: none;
+      cursor: pointer;
+    }
+    .gg-banner__menu-toggle span {
+      display: block;
+      height: 2px;
+      width: 100%;
+      background: var(--gg-black);
+    }
+    .gg-banner__menu-toggle:focus-visible { outline: 2px solid var(--gg-black); outline-offset: 4px; }
+  
+    /* ---------- Mobile menu drawer ---------- */
+    .gg-nav {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+    }
+    .gg-nav.is-open {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 0.25s ease;
+    }
+  
+    .gg-nav__backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+    }
+  
+    .gg-nav__panel {
+      position: relative;
+      width: 100%;
+      background: var(--gg-white);
+      transform: translateY(-16px);
+      transition: transform 0.25s ease;
+    }
+    .gg-nav.is-open .gg-nav__panel { transform: translateY(0); }
+  
+    .gg-nav__bar {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .gg-nav__close {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: none;
+      font-size: 28px;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .gg-nav__close:focus-visible { outline: 2px solid var(--gg-black); outline-offset: 2px; }
+  
+    .gg-nav__body {
+      background: #f4f4f4;
+      padding: 24px 20px 32px;
+      text-align: center;
+    }
+    .gg-nav__promo {
+      margin: 0 0 20px;
+      font-size: 16px;
+      color: var(--gg-black);
+    }
+    .gg-nav__cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 16px;
+    }
+  
+    @media (prefers-reduced-motion: reduce) {
+      .gg-nav,
+      .gg-nav__panel { transition: none; }
+    }
   
     .gg-banner__brand {
       font-size: var(--gg-fs-brand);
@@ -243,6 +369,11 @@
       margin: 0 0 20px;
     }
     .gg-banner__text p { margin: 0 0 1em; }
+  
+    /* Mobile / desktop text swap: base shows the mobile copy, desktop media
+       query below swaps to the desktop copy. Only one is ever visible. */
+    .gg-banner__show-mobile  { display: block; }
+    .gg-banner__show-desktop { display: none; }
   
     /* ---------- Bottom strip ---------- */
     .gg-banner__strip {
@@ -334,6 +465,14 @@
       .gg-banner__gift-btn { display: inline-block; } /* shown on desktop */
       .gg-banner__promo { display: inline; }          /* shown on desktop */
   
+      /* Mobile menu is off on desktop; use the inline top bar instead */
+      .gg-banner__menu-toggle { display: none; }
+      .gg-nav { display: none; }
+  
+      /* Hero text: show the desktop copy, hide the mobile copy */
+      .gg-banner__show-mobile  { display: none; }
+      .gg-banner__show-desktop { display: block; }
+  
       .gg-banner__hero {
         align-items: flex-end;          /* content block sits toward the bottom */
         padding: 60px;
@@ -386,6 +525,43 @@
     }
     */
   {% endstylesheet %}
+  
+  {% javascript %}
+    /* =========================================================================
+       MOBILE MENU DRAWER  (vanilla JS, no jQuery)
+       Opens/closes the .gg-nav drawer. Guarded so it's a no-op on pages without
+       the banner. Closes on the X, the backdrop, or the Escape key.
+       ========================================================================= */
+    (function () {
+      'use strict';
+  
+      var nav = document.querySelector('[data-gg-nav]');
+      var openBtn = document.querySelector('[data-gg-nav-open]');
+      if (!nav || !openBtn) return;
+  
+      function open() {
+        nav.classList.add('is-open');
+        openBtn.setAttribute('aria-expanded', 'true');
+        document.documentElement.style.overflow = 'hidden'; // lock background scroll
+      }
+  
+      function close() {
+        nav.classList.remove('is-open');
+        openBtn.setAttribute('aria-expanded', 'false');
+        document.documentElement.style.overflow = '';
+      }
+  
+      openBtn.addEventListener('click', open);
+  
+      nav.querySelectorAll('[data-gg-nav-close]').forEach(function (el) {
+        el.addEventListener('click', close);
+      });
+  
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && nav.classList.contains('is-open')) close();
+      });
+    })();
+  {% endjavascript %}
   
   {% schema %}
   {
@@ -456,10 +632,22 @@
         "default": "The Gift Guide"
       },
       {
+        "type": "text",
+        "id": "heading_mobile",
+        "label": "Heading (mobile)",
+        "info": "Leave empty to reuse the desktop heading."
+      },
+      {
         "type": "richtext",
         "id": "body_text",
         "label": "Body text",
         "default": "<p>Discover Joy. Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season.</p>"
+      },
+      {
+        "type": "richtext",
+        "id": "body_text_mobile",
+        "label": "Body text (mobile)",
+        "info": "Leave empty to reuse the desktop body text."
       },
       {
         "type": "text",
