@@ -13,6 +13,7 @@
       "type": "expert-ecom-banner",
       "settings": {
         "hide_theme_header": true,
+        "brand_logo": "shopify://shop_images/Group_1000007858.png",
         "brand_name": "TISSO VISON",
         "promo_text": "Find the ideal gift for your loved ones.",
         "choose_gift_label": "CHOOSE GIFT",
