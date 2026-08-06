@@ -220,7 +220,7 @@
   .gg-popup__meta { flex: 1; min-width: 0; }
   .gg-popup__title { font-size: 16px; font-weight: 300; margin: 0 0 6px; }
   .gg-popup__price { font-size: 18px; font-weight: 400; margin: 0 0 10px; }
-  .gg-popup__desc  { font-size: 13px; line-height: 1.5; color: #555; margin: 0; font-weight: 300; }
+  .gg-popup__desc  { font-size: 13px; line-height: 1.5; color: #fff; margin: 0; font-weight: 300; }
 
   /* Option groups (injected by JS) */
   .gg-opt { margin: 0 0 20px; }
@@ -258,9 +258,21 @@
   background: var(--swatch, transparent);
   z-index: 1;            /* keep the colour bar visible over the black fill */
 }
+.gg-opt__btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;                                   /* behind text and swatch bar */
+  background: var(--gg-black);
+  transform: translateX(-100%);                  /* parked off the left */
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.gg-opt__btn[aria-pressed="true"]::after {
+  transform: translateX(0);                      /* slides left → right */
+}
   .gg-opt__btn:first-child { border-left: none; }
   .gg-opt__btn[aria-pressed="true"] {
-    background: var(--gg-black);
+
     color: var(--gg-white);
     }
   .gg-opt__btn:not([aria-pressed="true"])::before { transition: none; }
