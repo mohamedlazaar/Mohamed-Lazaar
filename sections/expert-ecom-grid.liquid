@@ -218,7 +218,7 @@
     background: #f2f2f2;
   }
   .gg-popup__meta { flex: 1; min-width: 0; }
-  .gg-popup__title { font-size: 16px; font-weight: 400; margin: 0 0 6px; }
+  .gg-popup__title { font-size: 16px; font-weight: 500; margin: 0 0 6px; }
   .gg-popup__price { font-size: 18px; font-weight: 500; margin: 0 0 10px; }
   .gg-popup__desc  { font-size: 13px; line-height: 1.5; color: #555; margin: 0; }
 
@@ -410,7 +410,14 @@
       function renderOptions(product) {
         elOpts.innerHTML = '';
 
-        product.options.forEach(function (optName, optIndex) {
+        // Render colour option(s) first, then the rest, so the order is always
+        // Colour on top and Size (etc.) underneath — regardless of Shopify order.
+        var order = [];
+        product.options.forEach(function (name, i) { if (isColourOption(name)) order.push(i); });
+        product.options.forEach(function (name, i) { if (!isColourOption(name)) order.push(i); });
+
+        order.forEach(function (optIndex) {
+          var optName = product.options[optIndex];
           var values = [];
           product.variants.forEach(function (v) {
             var val = v.options[optIndex];
@@ -419,6 +426,7 @@
 
           var group = document.createElement('div');
           group.className = 'gg-opt';
+          group.setAttribute('data-opt-index', optIndex);
 
           var label = document.createElement('span');
           label.className = 'gg-opt__name';
@@ -506,8 +514,8 @@
 
       // ---- Reflect selection into the UI ---------------------------------
       function syncSelection() {
-        var groups = elOpts.querySelectorAll('.gg-opt');
-        groups.forEach(function (group, optIndex) {
+        elOpts.querySelectorAll('.gg-opt').forEach(function (group) {
+          var optIndex = Number(group.getAttribute('data-opt-index'));
           group.querySelectorAll('.gg-opt__btn').forEach(function (btn) {
             btn.setAttribute('aria-pressed', String(btn.textContent === current.selected[optIndex]));
           });

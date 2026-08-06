@@ -54,7 +54,7 @@
         class="gg-banner__gift-btn gg-btn"
         href="{{ section.settings.choose_gift_link | default: '#' }}"
       >
-        {{ section.settings.choose_gift_label | escape }}
+        {{ section.settings.choose_gift_label | escape }} {{ 'icon-arrow.svg' | asset_url  }}
       </a>
     </div>
   
@@ -81,7 +81,7 @@
             href="{{ section.settings.choose_gift_link | default: '#' }}"
           >
             <span>{{ section.settings.choose_gift_label | escape }}</span>
-            <span class="gg-nav__arrow" aria-hidden="true">&rarr;</span>
+            <span class="gg-nav__arrow" aria-hidden="true">{{ 'icon-arrow.svg' | asset_url  }}</span>
           </a>
         </div>
       </div>
@@ -138,6 +138,7 @@
           href="{{ section.settings.shop_now_link | default: '#' }}"
         >
           {{ section.settings.shop_now_label | escape }}
+          {{ 'icon-arrow.svg' | asset_url  }}
         </a>
       </div>
     </div>
