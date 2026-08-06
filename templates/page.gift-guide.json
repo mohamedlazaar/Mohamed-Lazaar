@@ -34,6 +34,8 @@
       "type": "expert-ecom-grid",
       "settings": {
         "heading": "heading",
+        "collection": "gift-guide",
+        "products_limit": 6,
         "auto_add_product": "black-leather-bag"
       }
     }
