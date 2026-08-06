@@ -32,7 +32,10 @@
     },
     "grid": {
       "type": "expert-ecom-grid",
-      "settings": {}
+      "settings": {
+        "heading": "heading",
+        "auto_add_product": "black-leather-bag"
+      }
     }
   },
   "order": [
