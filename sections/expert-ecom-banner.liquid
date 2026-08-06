@@ -11,7 +11,7 @@
       }
     {%- endstyle -%}
   {%- endif -%}
-  
+
   
   <section
     class="gg-banner"
@@ -393,7 +393,7 @@
        ========================================================================= */
     .gg-btn {
       position: relative;
-      display: inline-block;
+      display: none;
       overflow: hidden;
       isolation: isolate;            /* keep the ::before behind the label */
       font-size: var(--gg-fs-btn);
@@ -462,7 +462,7 @@
         gap: 40px;
         padding: 24px 60px;
       }
-  
+      .gg-btn { display: inline-block; }
       .gg-banner__gift-btn { display: inline-block; } /* shown on desktop */
       .gg-banner__promo { display: inline; }          /* shown on desktop */
   
